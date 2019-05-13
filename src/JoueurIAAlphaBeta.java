@@ -62,6 +62,18 @@ public class JoueurIAAlphaBeta extends JoueurIA{
         }
     }
 
+    public float maxab(float a, float b){
+        float ret = a;
+        if (b > a) ret = b;
+        return ret;
+    }
+
+    public float minab(float a, float b){
+        float ret = a;
+        if (b < a) ret = b;
+        return ret;
+    }
+
     @Override
     public Action choisirAction(Etat etat){
         List<Action> actionsPossibles = etat.actionsPossibles();
