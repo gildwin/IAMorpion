@@ -35,6 +35,7 @@ public class Partie extends Observable {
 		this.joueurs[1] = j2;
 		for (int i = 0; i < this.nombreJoueurs; i++) {
 			this.joueurs[i].setId(i);
+			System.out.println(joueurs[i].getNom() + joueurs[i].getID());
 		}
 		this.etatCourant = new Etat(this, new Plateau(taille), 0);
 		

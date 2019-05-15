@@ -23,20 +23,20 @@ public class JoueurIAAlphaBeta extends JoueurIA{
         return alpha;
     }*/
 
-    public float min(Etat n, float alpha, float beta){
-        return beta;
-    }
 
     public float alphaBeta(Etat n, float alpha, float beta){
         List<Action> actionsPossibles = n.actionsPossibles();
         int joueur = n.getIdJoueurCourant();
 
+        System.out.println(n.getIdJoueurCourant()+" "+this.getID());
+
         if (n.situationCourante() instanceof Victoire) {
+            System.out.println(this.getNom() + " et vainqueur : " + ((Victoire) n.situationCourante()).getVainqueur().getNom());
             if(this == ((Victoire) n.situationCourante()).getVainqueur()){
-                return 1;
+                return 99;
             }
             else{
-                return -1;
+                return -99;
             }
         }
         if(actionsPossibles.isEmpty()) {
@@ -45,66 +45,68 @@ public class JoueurIAAlphaBeta extends JoueurIA{
         else{
             //Type Max
             if(this.getID()==joueur){
+                //System.out.println("Max");
+                //System.exit(0);
                 int action;
-                for(action = 0; action<actionsPossibles.size(); action++){
-                    if (alpha<beta){
+                for(action = 0; action<actionsPossibles.size() && alpha<beta; action++){
+
                         Etat copieden = n.clone();
-                        Action curAction = copieden.actionsPossibles().get(action);
+
+                        Action curAction = actionsPossibles.get(action);
+
                         copieden.jouer(curAction);
+
                         copieden.setIdJoueurCourant(copieden.getIdJoueurCourant()+1);
-                        System.out.println("Type Max");
+                        /*System.out.println("Type Max");
                         System.out.println("Action choisie : " + curAction);
-                        System.out.println("Actions possibles : " + copieden.actionsPossibles());
-                        alpha = maxab(alpha, alphaBeta(copieden,alpha,beta));
-                        System.out.println("Valeur de Alpha : " + alpha);
-                    }
+                        System.out.println("Actions possibles : " + copieden.actionsPossibles());*/
+                        alpha = Math.max(alpha, alphaBeta(copieden,alpha,beta));
+                        //System.out.println("Valeur de Alpha : " + alpha);
                 }
+                //System.out.println("Valeur de Alpha" + alpha);
                 return alpha;
             }
             //Type Min
             else{
+                //System.out.println("Min");
+                //System.exit(0);
                 int action;
-                for(action = 0; action<actionsPossibles.size(); action++){
-                    if (alpha<beta){
+                for(action = 0; action<actionsPossibles.size() && alpha<beta; action++){
                         Etat copieden = n.clone();
-                        Action curAction = copieden.actionsPossibles().get(action);
+                        Action curAction = actionsPossibles.get(action);
                         copieden.jouer(curAction);
                         copieden.setIdJoueurCourant(copieden.getIdJoueurCourant()+1);
-                        System.out.println("Type Min");
+                        /*System.out.println("Type Min");
                         System.out.println("Action choisie : " + curAction);
-                        System.out.println("Actions possibles : " + copieden.actionsPossibles());
-                        beta = minab(alpha, alphaBeta(copieden,alpha,beta));
-                        System.out.println("Valeur de Beta : " + beta);
-                    }
+                        System.out.println("Actions possibles : " + copieden.actionsPossibles());*/
+                        beta = Math.min(beta, alphaBeta(copieden,alpha,beta));
+                        //System.out.println("Valeur de Beta : " + beta);
                 }
+                //System.out.println("Valeur de Beta" + beta);
                 return beta;
             }
         }
     }
 
-    public float maxab(float a, float b){
-        float ret = a;
-        if (b > a) ret = b;
-        return ret;
-    }
 
-    public float minab(float a, float b){
-        float ret = a;
-        if (b < a) ret = b;
-        return ret;
-    }
 
     @Override
     public Action choisirAction(Etat etat){
         List<Action> actionsPossibles = etat.actionsPossibles();
+
         Action actionChoisie = actionsPossibles.get(0);
-        float meilleurScore = -1;
+        float meilleurScore = -99;
         int i;
+
         for(i = 0; i<actionsPossibles.size(); i++){
             Etat copieEtat = etat.clone();
+            Action curEtat = actionsPossibles.get(i);
+            copieEtat.jouer(curEtat);
             copieEtat.setIdJoueurCourant(copieEtat.getIdJoueurCourant()+1);
-            copieEtat.jouer(copieEtat.actionsPossibles().get(i));
+
             float currentScore = alphaBeta(copieEtat, -99, 99);
+            System.out.println("Score de l'action " + curEtat + " : " + currentScore);
+
             if(currentScore>meilleurScore){
                 meilleurScore = currentScore;
                 actionChoisie = actionsPossibles.get(i);
