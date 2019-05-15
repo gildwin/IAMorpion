@@ -125,7 +125,7 @@ public class Application extends JFrame implements Observer {
 	public static void main(String[] args) throws Exception {
 		// Créer N joueurs
 		Joueur j1 = new JoueurHumain("Bob");
-		Joueur j2 = new JoueurIAAleatoire("Alice");
+		Joueur j2 = new JoueurIAAlphaBeta("Alice");
 		
 		// Créer une partie
 		int taillePlateau = 3;
