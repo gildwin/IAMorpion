@@ -40,7 +40,7 @@ public class Plateau {
 			}
 		}
 	}
-	
+
 	/**
 	 * Clone le plateau courant
 	 *
@@ -189,7 +189,39 @@ public class Plateau {
 		}
 		return Symbole.VIDE;
 	}
-	
+
+	public Symbole NSymbolesConsecutifs(int x, int y, int directionX, int directionY, int N) {
+		Symbole dernierSymbole = Symbole.VIDE;
+		int nombreDernierSymbole = 0;
+		while (x >= 0 && y >= 0 && x < taille && y < taille) {
+			// Si case non vide
+			if (getCase(x, y) != Symbole.VIDE) {
+				// Si même symbole que la case précédente
+				if (dernierSymbole == getCase(x, y)) {
+					nombreDernierSymbole++;
+				}
+				// Si symbole différent
+				else {
+					dernierSymbole = getCase(x, y);
+					nombreDernierSymbole = 1;
+				}
+			}
+			// Si case vide
+			else {
+				dernierSymbole = getCase(x, y);
+				nombreDernierSymbole = 0;
+			}
+			// Si N d'affilée
+			if (nombreDernierSymbole == N) {
+				return dernierSymbole;
+			}
+
+			x += directionX;
+			y += directionY;
+		}
+		return Symbole.VIDE;
+	}
+
 	/**
 	 * Teste s'il y a une diagonale gagnante sur le plateau
 	 *
