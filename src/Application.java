@@ -128,7 +128,7 @@ public class Application extends JFrame implements Observer {
 		Joueur j2 = new JoueurIAAlphaBeta("Alice");
 		
 		// Créer une partie
-		int taillePlateau = 5;
+		int taillePlateau = 3;
 		Partie p = new Partie(taillePlateau, j1, j2);
 		
 		//Créer une instance d'application graphique

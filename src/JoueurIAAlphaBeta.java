@@ -95,7 +95,7 @@ public class JoueurIAAlphaBeta extends JoueurIA{
         int curY = y;
         int curPions = 0;
         while(curX>=0 && curY>=0 && curX<plateau.getTaille() && curY<plateau.getTaille()){
-            //System.out.println("case("+curX+","+curY+")");
+            System.out.println("case("+curX+","+curY+")");
             if(plateau.getCase(curX, curY) == symbole){
                 curPions++;
             }
@@ -163,9 +163,10 @@ public class JoueurIAAlphaBeta extends JoueurIA{
                 }
             }
 
+            int PartPlat3 = plateau.getTaille();
             //Gestion diagonales
-            for(int i = 0; i<plateau.getTaille()-3; i++){
-                //System.out.println("Nouvelle diagonale montante");
+            for(int i = 0; (i<plateau.getTaille()) || PartPlat3==3; i++){
+                System.out.println("Nouvelle diagonale montante");
                 //Diagonales montantes
                 if (!(auMoins(1, Symbole.O, ptaille-1, i, -1, 1, plateau) && auMoins(1, Symbole.X, ptaille-1, i, -1, 1, plateau))) {
                     if(auMoins(3, Symbole.O, ptaille-1, i, -1, 1, plateau)){
@@ -188,7 +189,7 @@ public class JoueurIAAlphaBeta extends JoueurIA{
                     }
                 }
                 if(i>0){
-                    //System.out.println("Nouvelle diagonale montante");
+                    System.out.println("Nouvelle diagonale montante");
                     if (!(auMoins(1, Symbole.O, ptaille-1-i, 0, -1, 1, plateau) && auMoins(1, Symbole.X, ptaille-1-i, 0, -1, 1, plateau))) {
                         if(auMoins(3, Symbole.O, ptaille-1-i, 0, -1, 1, plateau)){
                             res = res + 20;
@@ -211,7 +212,7 @@ public class JoueurIAAlphaBeta extends JoueurIA{
                     }
                 }
 
-                //System.out.println("Nouvelle diagonale descendante");
+                System.out.println("Nouvelle diagonale descendante");
                 //Diagonales descendantes
                 if (!(auMoins(1, Symbole.O, 0, i, 1, 1, plateau) && auMoins(1, Symbole.X, 0, i, 1, 1, plateau))) {
                     if(auMoins(3, Symbole.O, 0, i, 1, 1, plateau)){
@@ -234,7 +235,7 @@ public class JoueurIAAlphaBeta extends JoueurIA{
                     }
                 }
                 if(i>0){
-                    //System.out.println("Nouvelle diagonale descendante");
+                    System.out.println("Nouvelle diagonale descendante");
                     if (!(auMoins(1, Symbole.O, i, 0, 1, 1, plateau) && auMoins(1, Symbole.X, i,0, 1, 1, plateau))) {
                         if(auMoins(3, Symbole.O, i, 0, 1, 1, plateau)){
                             res = res + 20;
@@ -256,6 +257,7 @@ public class JoueurIAAlphaBeta extends JoueurIA{
                         }
                     }
                 }
+                PartPlat3--;
             }
             return res;
         }
