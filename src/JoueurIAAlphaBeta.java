@@ -8,67 +8,257 @@ public class JoueurIAAlphaBeta extends JoueurIA{
         super(name);
     }
 
-    public float h(Etat etat){
-        float cptCroix = 0;
-        float cptRond = 0;
-        Plateau p = etat.getPlateau();
-        int i;
-        for(i=0;i<p.getTaille();i++){
-            //Test sur les lignes
-            Symbole sym1 = p.NSymbolesConsecutifs(i,0,1,0, 2);
-            Symbole sym2 = p.NSymbolesConsecutifs(i,0,1,0, 3);
-            //Test sur les colonnes
-            Symbole sym3 = p.NSymbolesConsecutifs(0, i,0,1, 2);
-            Symbole sym4 = p.NSymbolesConsecutifs(0, i,0,1, 3);
-            if(sym1.toString().equals("X")){
-//                System.out.println("2 Symboles X alignés");
-                cptCroix++;
-            }else if (sym1.toString().equals("O")){
-//                System.out.println("2 Symboles O alignés");
-                cptRond++;
-            }
-
-            if(sym2.toString().equals("X")){
-//                System.out.println("3 Symboles X alignés");
-                cptCroix++;
-            }else if (sym2.toString().equals("O")){
-//                System.out.println("3 Symboles O alignés");
-                cptRond++;
-            }
-
-            if(sym3.toString().equals("X")){
-//                System.out.println("2 Symboles X colonnés");
-                cptCroix++;
-            }else if (sym3.toString().equals("O")){
-                System.out.println("2 Symboles O colonnés");
-                cptRond++;
-            }
-
-            if(sym4.toString().equals("X")){
-//                System.out.println("3 Symboles X colonnés");
-                cptCroix++;
-            }else if (sym4.toString().equals("O")){
-//                System.out.println("3 Symboles O colonnés");
-                cptRond++;
+    public Symbole vicEncorePossibleLigne(Plateau plateau, int x){
+        Symbole sym = Symbole.VIDE;
+        int CptSymbConsec = 0;
+        for(int k = 0; k<plateau.getTaille(); k++) {
+            Symbole curSym = plateau.getCase(x,k);
+            if(curSym == sym || curSym == Symbole.VIDE){
+                CptSymbConsec++;
+                if(CptSymbConsec == 4){
+                    return curSym;
+                }
+            }else {
+                CptSymbConsec = 0;
+                sym = curSym;
             }
         }
-        //Test sur les diagonales
-        Symbole diag1 = p.NSymbolesConsecutifs(0,0,1,1,2);
-        Symbole diag2 = p.NSymbolesConsecutifs(p.getTaille()-1,0,1,-1,2);
-        if(diag1.toString().equals("X")){
-//            System.out.println("2 Symboles X diagonalés");
-            cptCroix++;
-        }else if (diag1.toString().equals("O")){
-            cptRond++;
-        }
+        return Symbole.VIDE;
+    }
 
-        if(diag2.toString().equals("X")){
-            cptCroix++;
-        }else if (diag2.toString().equals("O")){
-            cptRond++;
+    public Symbole vicEncorePossibleColonne(Plateau plateau, int y){
+        Symbole sym = Symbole.VIDE;
+        int CptSymbConsec = 0;
+        for(int k = 0; k<plateau.getTaille(); k++) {
+            Symbole curSym = plateau.getCase(k,y);
+            if(curSym == sym || curSym == Symbole.VIDE){
+                CptSymbConsec++;
+                if(CptSymbConsec == 4){
+                    return curSym;
+                }
+            }else {
+                CptSymbConsec = 0;
+                sym = curSym;
+            }
         }
-//        System.out.println("nombre de croix gagnantes : " + cptCroix + " et nombre de ronds gagnants : " + cptRond);
-        return 100*(cptRond-cptCroix)/(cptRond+cptCroix+1);
+        return Symbole.VIDE;
+    }
+
+    /*public Symbole vicEncorePossibleDiag(Plateau plateau) {
+        Symbole sym = Symbole.VIDE;
+        int CptSymbConsec = 0;
+        //Diag HGBD
+        for (int k = 0; k < plateau.getTaille(); k++) {
+
+        }
+        return Symbole.VIDE;
+    }*/
+
+    /*public float h(Etat etat){
+        Plateau plateau = etat.getPlateau();
+        //Si quelqu'un gagne, 100 ou -100
+        if (etat.situationCourante() instanceof Victoire) {
+            if(this == ((Victoire) etat.situationCourante()).getVainqueur()){
+                return 100;
+            }
+            else{
+                return -100;
+            }
+        }
+        //Sinon, il faut évaluer la situation
+        else{
+            //Human
+            int nX = 0;
+            //AI
+            int nO = 0;
+            for(int k = 0; k<plateau.getTaille(); k++){
+                Symbole symL = vicEncorePossibleLigne(plateau, k);
+                Symbole symC = vicEncorePossibleColonne(plateau, k);
+                if(symL == Symbole.X){
+                    nX++;
+                }else if(symL == Symbole.O){
+                    nO++;
+                }
+                if(symC == Symbole.X){
+                    nX++;
+                }else if(symC == Symbole.O){
+                    nO++;
+                }
+            }
+            return 100*(nO-2*nX)/(nO+2*nX+1);
+        }
+    }*/
+
+    public boolean auMoins(int nbPions, Symbole symbole, int x, int y, int dX, int dY, Plateau plateau){
+        boolean res = false;
+        int curX = x;
+        int curY = y;
+        int curPions = 0;
+        while(curX>=0 && curY>=0 && curX<plateau.getTaille() && curY<plateau.getTaille()){
+            //System.out.println("case("+curX+","+curY+")");
+            if(plateau.getCase(curX, curY) == symbole){
+                curPions++;
+            }
+            curX+=dX;
+            curY+=dY;
+        }
+        if(curPions>=nbPions){
+            res = true;
+        }
+        return res;
+    }
+
+    public int h(Etat etat){
+        //System.out.println("Appel");
+        if (etat.situationCourante() instanceof Victoire) {
+            if(this == ((Victoire) etat.situationCourante()).getVainqueur()){
+                return 100;
+            }
+            else{
+                return -100;
+            }
+        }
+        else {
+            int res = 0;
+            Plateau plateau = etat.getPlateau();
+            int ptaille = plateau.getTaille();
+            //Gestion lignes et colonnes
+            for (int x = 0; x < plateau.getTaille(); x++) {
+                //Gestion lignes
+                //System.out.println("Nouvelle ligne");
+                if (!(auMoins(1, Symbole.O, x, 0, 0, 1, plateau) && auMoins(1, Symbole.X, x, 0, 0, 1, plateau))) {
+                    if (auMoins(3, Symbole.X, x, 0, 0, 1, plateau)) {
+                        res = res - 20;
+                    } else if (auMoins(3, Symbole.O, x, 0, 0, 1, plateau)) {
+                        res = res + 20;
+                    } else if (auMoins(2, Symbole.X, x, 0, 0, 1, plateau)) {
+                        res = res - 5;
+                    } else if (auMoins(2, Symbole.O, x, 0, 0, 1, plateau)) {
+                        res = res + 5;
+                    } else if (auMoins(1, Symbole.X, x, 0, 0, 1, plateau)) {
+                        res = res - 1;
+                    } else if (auMoins(1, Symbole.O, x, 0, 0, 1, plateau)) {
+                        res = res + 1;
+                    }
+                }
+            }
+
+            for (int y = 0; y < plateau.getTaille(); y++) {
+            //System.out.println("Nouvelle colonne");
+            //Gestion colonnes
+                if (!(auMoins(1, Symbole.O, 0, y, 1, 0, plateau) && auMoins(1, Symbole.X, 0, y, 1, 0, plateau))) {
+                    if (auMoins(3, Symbole.X, 0, y, 1, 0, plateau)) {
+                        res = res - 20;
+                    } else if (auMoins(3, Symbole.O, 0, y, 1, 0, plateau)) {
+                        res = res + 20;
+                    } else if (auMoins(2, Symbole.X, 0, y, 1, 0, plateau)) {
+                        res = res - 5;
+                    } else if (auMoins(2, Symbole.O, 0, y, 1, 0, plateau)) {
+                        res = res + 5;
+                    } else if (auMoins(1, Symbole.X, 0, y, 1, 0, plateau)) {
+                        res = res - 1;
+                    } else if (auMoins(1, Symbole.O, 0, y, 1, 0, plateau)) {
+                        res = res + 1;
+                    }
+                }
+            }
+
+            //Gestion diagonales
+            for(int i = 0; i<plateau.getTaille()-3; i++){
+                //System.out.println("Nouvelle diagonale montante");
+                //Diagonales montantes
+                if (!(auMoins(1, Symbole.O, ptaille-1, i, -1, 1, plateau) && auMoins(1, Symbole.X, ptaille-1, i, -1, 1, plateau))) {
+                    if(auMoins(3, Symbole.O, ptaille-1, i, -1, 1, plateau)){
+                        res = res + 20;
+                    }
+                    else if(auMoins(3, Symbole.X, ptaille-1, i, -1, 1, plateau)){
+                        res = res - 20;
+                    }
+                    else if(auMoins(2, Symbole.O, ptaille-1, i, -1, 1, plateau)){
+                        res = res + 5;
+                    }
+                    else if(auMoins(2, Symbole.X, ptaille-1, i, -1, 1, plateau)){
+                        res = res - 5;
+                    }
+                    else if(auMoins(1, Symbole.O, ptaille-1, i, -1, 1, plateau)){
+                        res = res + 1;
+                    }
+                    else if(auMoins(1, Symbole.X, ptaille-1, i, -1, 1, plateau)){
+                        res = res - 1;
+                    }
+                }
+                if(i>0){
+                    //System.out.println("Nouvelle diagonale montante");
+                    if (!(auMoins(1, Symbole.O, ptaille-1-i, 0, -1, 1, plateau) && auMoins(1, Symbole.X, ptaille-1-i, 0, -1, 1, plateau))) {
+                        if(auMoins(3, Symbole.O, ptaille-1-i, 0, -1, 1, plateau)){
+                            res = res + 20;
+                        }
+                        else if(auMoins(3, Symbole.X, ptaille-1-i, 0, -1, 1, plateau)){
+                            res = res - 20;
+                        }
+                        else if(auMoins(2, Symbole.O, ptaille-1-i, 0, -1, 1, plateau)){
+                            res = res + 5;
+                        }
+                        else if(auMoins(2, Symbole.X, ptaille-1-i, 0, -1, 1, plateau)){
+                            res = res - 5;
+                        }
+                        else if(auMoins(1, Symbole.O, ptaille-1-i, 0, -1, 1, plateau)){
+                            res = res + 1;
+                        }
+                        else if(auMoins(1, Symbole.X, ptaille-1-i, 0, -1, 1, plateau)){
+                            res = res - 1;
+                        }
+                    }
+                }
+
+                //System.out.println("Nouvelle diagonale descendante");
+                //Diagonales descendantes
+                if (!(auMoins(1, Symbole.O, 0, i, 1, 1, plateau) && auMoins(1, Symbole.X, 0, i, 1, 1, plateau))) {
+                    if(auMoins(3, Symbole.O, 0, i, 1, 1, plateau)){
+                        res = res + 20;
+                    }
+                    else if(auMoins(3, Symbole.X, 0, i, 1, 1, plateau)){
+                        res = res - 20;
+                    }
+                    else if(auMoins(2, Symbole.O, 0, i, 1, 1, plateau)){
+                        res = res + 5;
+                    }
+                    else if(auMoins(2, Symbole.X, 0, i, 1, 1, plateau)){
+                        res = res - 5;
+                    }
+                    else if(auMoins(1, Symbole.O, 0, i, 1, 1, plateau)){
+                        res = res + 1;
+                    }
+                    else if(auMoins(1, Symbole.X, 0, i, 1, 1, plateau)){
+                        res = res - 1;
+                    }
+                }
+                if(i>0){
+                    //System.out.println("Nouvelle diagonale descendante");
+                    if (!(auMoins(1, Symbole.O, i, 0, 1, 1, plateau) && auMoins(1, Symbole.X, i,0, 1, 1, plateau))) {
+                        if(auMoins(3, Symbole.O, i, 0, 1, 1, plateau)){
+                            res = res + 20;
+                        }
+                        else if(auMoins(3, Symbole.X, i, 0, 1, 1, plateau)){
+                            res = res - 20;
+                        }
+                        else if(auMoins(2, Symbole.O, i, 0, 1, 1, plateau)){
+                            res = res + 5;
+                        }
+                        else if(auMoins(2, Symbole.X, i, 0, 1, 1, plateau)){
+                            res = res - 5;
+                        }
+                        else if(auMoins(1, Symbole.O, i, 0, 1, 1, plateau)){
+                            res = res + 1;
+                        }
+                        else if(auMoins(1, Symbole.X, i, 0, 1, 1, plateau)){
+                            res = res - 1;
+                        }
+                    }
+                }
+            }
+            return res;
+        }
     }
 
     public float alphaBeta(Etat n, float alpha, float beta){
@@ -77,10 +267,10 @@ public class JoueurIAAlphaBeta extends JoueurIA{
 
         if (n.situationCourante() instanceof Victoire) {
             if(this == ((Victoire) n.situationCourante()).getVainqueur()){
-                return 99;
+                return 100;
             }
             else{
-                return -99;
+                return -100;
             }
         }
         if(actionsPossibles.isEmpty()) {
@@ -115,6 +305,7 @@ public class JoueurIAAlphaBeta extends JoueurIA{
                         Action curAction = actionsPossibles.get(action);
                         copieden.jouer(curAction);
                         copieden.setIdJoueurCourant(copieden.getIdJoueurCourant()+1);
+
                         beta = Math.min(beta, alphaBeta(copieden,alpha,beta));
                 }
                 return beta;
@@ -123,17 +314,18 @@ public class JoueurIAAlphaBeta extends JoueurIA{
     }
 
     public float ApprofondissementIteratif(Etat n, float alpha, float beta, int curProf, int maxProf){
-        List<Action> actionsPossibles = n.actionsPossibles();
-        int joueur = n.getIdJoueurCourant();
-
         //On est arrivé à une feuille de l'arbre
         if (n.situationCourante() instanceof Victoire) {
             if (this == ((Victoire) n.situationCourante()).getVainqueur()) {
-                return 99;
+                return 100;
             } else {
-                return -99;
+                return -100;
             }
         }
+
+        List<Action> actionsPossibles = n.actionsPossibles();
+        int joueur = n.getIdJoueurCourant();
+
         if (actionsPossibles.isEmpty()) {
             return 0;
         }
@@ -188,8 +380,6 @@ public class JoueurIAAlphaBeta extends JoueurIA{
         float meilleurScore = -99;
         int i;
 
-        int largeurPlateau = etat.getPlateau().getTaille();
-
         int profParcours = etat.getPlateau().getToutesCasesLibres().size();
         int profCourant = 1;
 
@@ -206,9 +396,10 @@ public class JoueurIAAlphaBeta extends JoueurIA{
                     System.out.println("Action retenue : " + currentScore + "\nAction remplacée : " + meilleurScore);
                     meilleurScore = currentScore;
                     actionChoisie = actionsPossibles.get(i);
-                    this.proposerAction(actionChoisie);
+//                    this.proposerAction(actionChoisie);
                 }
             }
+            this.proposerAction(actionChoisie);
             profCourant++;
         }
         return actionChoisie;

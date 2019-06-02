@@ -8,7 +8,7 @@ public abstract class JoueurIA extends Joueur {
 	/**
 	 * Temps de réflexion en millisecondes pour choisir un coup
 	 */
-	public static int TEMPS_DE_REFLEXION = 1000;
+	public static int TEMPS_DE_REFLEXION = 2000;
 	
 	/** Action mémorisée lors de la recherche d'un coup à jouer */
 	protected Action actionMemorisee;
